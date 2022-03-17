@@ -1,11 +1,13 @@
+import { mapStores } from "pinia";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import Map from "../views/Map.vue";
+import { RouteNames } from "./routes";
+import { UserViewTypes } from "@/modules/User/User";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "home",
-    component: HomeView,
+    redirect: "/login",
   },
   {
     path: "/about",
@@ -15,6 +17,61 @@ const routes: Array<RouteRecordRaw> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+  },
+  {
+    path: "/login",
+    name: RouteNames.Login,
+    component: () =>
+      import(/* webPackChunkName: "login" */ "../modules/User/LoginView.vue"),
+  },
+  {
+    path: "/register",
+    name: RouteNames.Register,
+    component: () =>
+      import(
+        /* webPackChunkName: "register" */ "../modules/User/RegisterView.vue"
+      ),
+  },
+  {
+    path: "/golfer/map",
+    name: RouteNames.Golfer.Map,
+    component: () => import(/* webPackChunkName: "map" */ "../views/Map.vue"),
+    meta: {
+      userViewType: UserViewTypes.GolferView,
+    },
+  },
+  {
+    path: "/pro-shop/dashboard",
+    name: RouteNames.ProShop.Dashboard,
+    component: () =>
+      import(
+        /* webPAckChunkName: "dashboard" */ "../views/ProShopDashboard.vue"
+      ),
+    meta: {
+      userViewType: UserViewTypes.ProShopView,
+    },
+  },
+  {
+    path: "/pro-shop/dashboard",
+    name: RouteNames.ProShop.Dashboard,
+    component: () =>
+      import(
+        /* webPAckChunkName: "dashboard" */ "../views/ProShopDashboard.vue"
+      ),
+    meta: {
+      userViewType: UserViewTypes.ProShopView,
+    },
+  },
+  {
+    path: "/pro-shop/scramble",
+    name: RouteNames.ProShop.Scramble,
+    component: () =>
+      import(
+        /* webPAckChunkName: "dashboard" */ "../views/ProShopDashboard.vue"
+      ),
+    meta: {
+      userViewType: UserViewTypes.ProShopView,
+    },
   },
 ];
 
