@@ -14,12 +14,11 @@ import Card from "primevue/card";
 import Password from "primevue/password";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
+import InputNumber from "primevue/inputnumber";
+import Calendar from "primevue/calendar";
+import AutoComplete from "primevue/autocomplete";
 
 import { initializeApp, FirebaseOptions } from "firebase/app";
-import { Vue } from "vue-demi";
-
-const geoLocation = require("geolocation");
-console.log("geo: ", geoLocation.getCurrentPosition);
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -44,4 +43,7 @@ createApp(App)
   .component("PasswordInput", Password)
   .component("p-button", Button)
   .component("p-dropdown", Dropdown)
+  .component("p-input-number", InputNumber)
+  .component("p-calendar", Calendar)
+  .component("p-auto-complete", AutoComplete)
   .mount("#app");

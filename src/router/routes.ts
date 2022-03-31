@@ -1,5 +1,6 @@
 export const RouteNames = {
   Login: "login",
+  Logout: "logout",
   Register: "register",
   Golfer: {
     Golfer: "golfer",
@@ -9,5 +10,6 @@ export const RouteNames = {
     ProShop: "pro-shop",
     Dashboard: "dashboard",
     Scramble: "scramble",
+    Register: "register",
   },
 };

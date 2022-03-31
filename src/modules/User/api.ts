@@ -5,6 +5,7 @@ import {
   UserCredential,
   User as fbUser,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 
 interface IApi {
@@ -12,6 +13,7 @@ interface IApi {
   addUser: (user: User) => Promise<void>;
   loginUser: (user: User) => Promise<fbUser>;
   getUser: (userId: string) => Promise<User>;
+  signOutUser: () => Promise<void>;
 }
 
 const dataBaseUrl: string = process.env.VUE_APP_FIREBASE_DATABASE_URL;
@@ -59,8 +61,14 @@ const getUser = (userId: string): Promise<User> =>
     .then((response) => response.json())
     .then((response) => {
       console.log("user: ", response);
-      // return getUserResponseToUser(response);
       return response;
+    })
+    .catch((error) => error);
+
+const signOutUser = (): Promise<void> =>
+  signOut(getAuth())
+    .then((resp) => {
+      console.log("resp: ", resp);
     })
     .catch((error) => error);
 
@@ -69,6 +77,7 @@ export const api: IApi = {
   addUser,
   loginUser,
   getUser,
+  signOutUser,
 };
 
 export default api;

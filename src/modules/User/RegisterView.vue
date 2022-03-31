@@ -1,3 +1,65 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import { userStore } from "./store/index";
+import { User } from "./User";
+import { useRouter } from "vue-router";
+import Map from "@/views/Map.vue";
+import { AddressEvt, Address } from "@/modules/User/User";
+import { RouteNames } from "@/router/routes";
+
+const router = useRouter();
+
+const ProShop = "pro-shop";
+const Golfer = "golfer";
+
+interface IUserType {
+  type: string;
+  display: string;
+}
+
+interface Position {
+  lat: number;
+  lng: number;
+}
+
+const newUserType: IUserType = {
+  type: "",
+  display: "",
+};
+
+const user = ref({
+  email: "",
+  password: "",
+  selectedUserType: newUserType,
+  address: {} as Address,
+});
+
+const userTypeOptions = ref([
+  { type: Golfer, display: "Golfer" },
+  { type: ProShop, display: "Pro-Shop" },
+]);
+
+const store = userStore();
+
+const addressSelect = (value: AddressEvt) => {
+  console.log({ value });
+  user.value.address = value;
+};
+
+const register = () => {
+  const newUser = new User();
+  newUser.email = user.value.email;
+  newUser.password = user.value.password;
+  newUser.userType = user.value.selectedUserType.type;
+  newUser.address = user.value.address;
+  store.registerUser(newUser).then(() => {
+    router.push({
+      name: RouteNames.ProShop.Dashboard,
+    });
+  });
+};
+</script>
+
 <template>
   <StandardCard>
     <template #content>
@@ -5,50 +67,10 @@
         <label for="email">Email</label>
         <InputText id="email" type="email" v-model="user.email" />
       </span>
-      <div class="field">
-        <div class="p-float-label">
-          <PasswordInput
-            id="password"
-            v-model="v$.password.$model"
-            :class="{ 'p-invalid': v$.password.$invalid && submitted }"
-            toggleMask
-          >
-            <template #header>
-              <h6>Pick a password</h6>
-            </template>
-            <template #footer="sp">
-              {{ sp.level }}
-              <Divider />
-              <p class="mt-2">Suggestions</p>
-              <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
-                <li>At least one lowercase</li>
-                <li>At least one uppercase</li>
-                <li>At least one numeric</li>
-                <li>Minimum 8 characters</li>
-              </ul>
-            </template>
-          </PasswordInput>
-          <label
-            for="password"
-            :class="{ 'p-error': v$.password.$invalid && submitted }"
-            >Password*</label
-          >
-        </div>
-        <small
-          v-if="
-            (v$.password.$invalid && submitted) ||
-            v$.password.$pending.$response
-          "
-          class="p-error"
-          >{{
-            v$.password.required.$message.replace("Value", "Password")
-          }}</small
-        >
-      </div>
-      <!-- <span class="p-float-label">
+      <span class="p-float-label">
         <label for="password">Password</label>
-        <PasswordInput v-model="user.password">
-          <template #header>
+        <PasswordInput type="password" v-model="user.password">
+          <!-- <template #header>
             <h6>Pick a password</h6>
           </template>
           <template #footer>
@@ -60,9 +82,9 @@
               <li>At least one numeric</li>
               <li>Minimum 8 characters</li>
             </ul>
-          </template>
+          </template> -->
         </PasswordInput>
-      </span> -->
+      </span>
       <span class="p-float-lbael">
         <p-dropdown
           v-model="user.selectedUserType"
@@ -72,56 +94,11 @@
         ></p-dropdown>
       </span>
       <span class="p-float-label">
+        <Map v-on:address-select="addressSelect" :isInputOnly="false" />
+      </span>
+      <span class="p-float-label">
         <p-button label="Submit" @click="register()">Register</p-button>
       </span>
     </template>
   </StandardCard>
 </template>
-<script setup lang="ts">
-import { ref, reactive } from "vue";
-import { userStore } from "./store/index";
-import { User } from "./User";
-import { useVuelidate, ValidationArgs } from '@vuelidate/core';
-import { email, required } from "@vuelidate/validators";
-
-interface Form {
-  name: "",
-  email: "",
-  password: "",
-}
-
-const user = ref({
-  email: "",
-  password: "",
-  selectedUserType: "",
-});
-
-const userTypeOptions = ref([
-  { type: "golfer", display: "Golfer" },
-  { type: "pro shop", display: "Pro-Shop" },
-]);
-
-const store = userStore();
-
-const state: Form = reactive({
-    name: '',
-    email: '',
-    password: '',
-});
-
-const rules: ValidationArgs = {
-    name: { required },
-    email: { required, email },
-    password: { required },
-};
-
-const v$ = useVuelidate<ValidationArgs>(rules, state);
-
-const register = () => {
-  const newUser = new User();
-  newUser.email = user.value.email;
-  newUser.password = user.value.password;
-  newUser.userType = user.value.selectedUserType;
-  store.registerUser(newUser);
-};
-</script>

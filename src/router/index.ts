@@ -1,8 +1,7 @@
-import { mapStores } from "pinia";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Map from "../views/Map.vue";
 import { RouteNames } from "./routes";
 import { UserViewTypes } from "@/modules/User/User";
+import { getAuth } from "firebase/auth";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -25,6 +24,12 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webPackChunkName: "login" */ "../modules/User/LoginView.vue"),
   },
   {
+    path: "/logout",
+    name: RouteNames.Logout,
+    component: () =>
+      import(/* webPackChunkName: "logout" */ "../modules/User/LogOutView.vue"),
+  },
+  {
     path: "/register",
     name: RouteNames.Register,
     component: () =>
@@ -45,18 +50,7 @@ const routes: Array<RouteRecordRaw> = [
     name: RouteNames.ProShop.Dashboard,
     component: () =>
       import(
-        /* webPAckChunkName: "dashboard" */ "../views/ProShopDashboard.vue"
-      ),
-    meta: {
-      userViewType: UserViewTypes.ProShopView,
-    },
-  },
-  {
-    path: "/pro-shop/dashboard",
-    name: RouteNames.ProShop.Dashboard,
-    component: () =>
-      import(
-        /* webPAckChunkName: "dashboard" */ "../views/ProShopDashboard.vue"
+        /* webPackChunkName: "dashboard" */ "../views/ProShopDashboard.vue"
       ),
     meta: {
       userViewType: UserViewTypes.ProShopView,
@@ -67,7 +61,7 @@ const routes: Array<RouteRecordRaw> = [
     name: RouteNames.ProShop.Scramble,
     component: () =>
       import(
-        /* webPAckChunkName: "dashboard" */ "../views/ProShopDashboard.vue"
+        /* webPackChunkName: "scramble" */ "../modules/ProShop/Scramble.vue"
       ),
     meta: {
       userViewType: UserViewTypes.ProShopView,
@@ -79,5 +73,22 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
+
+// router.beforeEach((to, from, next) => {
+//   const auth = getAuth();
+
+//   const currentUser = auth.currentUser;
+
+//   console.log("current: ", currentUser);
+
+//   if (currentUser !== undefined) {
+//     const userType = to.matched.some(
+//       (record) => record.meta.userViewType === UserViewTypes.ProShopView
+//     );
+//     userType ? next(RouteNames.ProShop.Dashboard) : next(RouteNames.Golfer.Map);
+//   } else {
+//     next(RouteNames.Login);
+//   }
+// });
 
 export default router;

@@ -15,20 +15,20 @@ export const userStore = defineStore("userStore", {
     errorMsg: {} as unknown,
     successMsg: "",
     loading: false,
-    user: {},
+    user: User as unknown,
   }),
   getters: {
     [Get.GetUser]: (state) => state.user,
   },
   actions: {
-    async registerUser(user: User): Promise<void> {
+    async registerUser(newUser: User): Promise<void> {
       this.resetMessages();
       this.loading = true;
       try {
-        const newUser = await api.registerUser(user);
-        user.id = newUser.uid;
-        api.addUser(user);
-        this.user = Object.assign({}, user);
+        const returnedUser = await api.registerUser(newUser);
+        newUser.id = returnedUser.uid;
+        api.addUser(newUser);
+        this.user = newUser;
       } catch (err) {
         this.errorMsg = err;
       } finally {
@@ -54,6 +54,18 @@ export const userStore = defineStore("userStore", {
     },
     resetMessages(): void {
       (this.successMsg = ""), (this.errorMsg = "");
+    },
+    signOutUser(user: User): void {
+      this.resetMessages();
+      this.loading = true;
+      try {
+        api.signOutUser();
+        this.successMsg = `Successfully logged out user ${user.email}`;
+      } catch (err) {
+        this.errorMsg = err;
+      } finally {
+        this.loading = false;
+      }
     },
   },
 });
